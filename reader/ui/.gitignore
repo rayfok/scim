@@ -1,0 +1,28 @@
+# Build artifacts
+build/
+
+# Editor settings
+.vscode/settings.json
+
+# Node modules
+node_modules
+
+# Local data for skimming
+src/data/facets/*
+!src/data/facets/skimmingData.json
+
+src/data/sections/*
+!src/data/sections/skimmingData.json
+
+src/data/captions/*
+!src/data/captions/skimmingData.json
+
+src/data/sentences/*
+!src/data/sentences/skimmingData.json
+
+src/data/abstract/*
+!src/data/abstract/skimmingData.json
+
+old/
+
+helper-scripts/

@@ -1,0 +1,46 @@
+.scrollbar-media-tag {
+  position: fixed;
+  right: 22px;
+  margin-top: 15px;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-radius: 5px;
+  background-color: wheat;
+  &__text {
+    font-size: 11px;
+    font-weight: bold;
+  }
+}
+
+.scrollbar-track {
+  position: absolute;
+  right: 0;
+  width: @scrollbarWidth;
+  height: 100%;
+  z-index: -1;
+  overflow-y: hidden;
+  pointer-events: none;
+  background-color: white;
+}
+
+.scrollbar-markup {
+  position: absolute;
+  right: 0;
+  top: @pdfjs-toolbarViewer-height;
+  width: @scrollbarWidth;
+  height: calc(100% - @pdfjs-toolbarViewer-height);
+  overflow-y: hidden;
+  pointer-events: none;
+}
+
+.scrollbar-mark {
+  position: absolute;
+  pointer-events: auto;
+  width: @scrollbarWidth;
+  height: @scrollbarMarkHeight;
+  z-index: 1000;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
