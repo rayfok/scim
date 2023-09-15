@@ -17,11 +17,19 @@ Abstract: Researchers need to keep up with immense literatures, though it is tim
 If you use our work, please cite our preprint
 
 ```
-@misc{dec-2022-scim,
-    title={Scim: Intelligent Skimming Support for Scientific Papers},
-    author={Fok, Raymond and Kambhamettu, Hita and Soldaini, Luca and Bragg, Jonathan and Lo, Kyle and Head, Andrew and Hearst, Marti A. and Weld, Daniel S.},
-    url = {https://arxiv.org/abs/2205.04561},
-    publisher = {arXiv},
-    year = {2022}
+@inproceedings{scimFok2023,
+    author = {Fok, Raymond and Kambhamettu, Hita and Soldaini, Luca and Bragg, Jonathan and Lo, Kyle and Hearst, Marti and Head, Andrew and Weld, Daniel S},
+    title = {Scim: Intelligent Skimming Support for Scientific Papers},
+    year = {2023},
+    isbn = {9798400701061},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3581641.3584034},
+    doi = {10.1145/3581641.3584034},
+    pages = {476–490},
+    numpages = {15},
+    keywords = {skimming, highlights, Intelligent reading interfaces, scientific papers},
+    location = {Sydney, NSW, Australia},
+    series = {IUI '23}
 }
 ```
