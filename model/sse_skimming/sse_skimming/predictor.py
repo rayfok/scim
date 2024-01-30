@@ -1,42 +1,36 @@
 from dataclasses import dataclass, field
 from typing import Dict, List
 
-
-from transformers.modeling_utils import PreTrainedModel
-from transformers.models.auto.modeling_auto import \
-    AutoModelForTokenClassification
-from transformers.models.auto.tokenization_auto import AutoTokenizer
-from transformers.tokenization_utils_base import PreTrainedTokenizerBase
-
+import torch
 from smashed.base.pipeline import Pipeline
-from smashed.mappers.tokenize import TokenizerMapper
-from smashed.mappers.multiseq import (
-    MultiSequenceStriderMapper,
-    TokensSequencesPaddingMapper,
-    AttentionMaskSequencePaddingMapper,
-    SingleValueToSequenceMapper,
-    SequencesConcatenateMapper,
-)
-from smashed.mappers.fields import MakeFieldMapper
-from smashed.mappers.converters import Python2TorchMapper
 from smashed.mappers.batchers import FixedBatchSizeMapper
 from smashed.mappers.collators import FromTokenizerCollatorMapper
-
-import torch
+from smashed.mappers.converters import Python2TorchMapper
+from smashed.mappers.fields import MakeFieldMapper
+from smashed.mappers.multiseq import (
+    AttentionMaskSequencePaddingMapper,
+    MultiSequenceStriderMapper,
+    SequencesConcatenateMapper,
+    SingleValueToSequenceMapper,
+    TokensSequencesPaddingMapper,
+)
+from smashed.mappers.tokenize import TokenizerMapper
+from transformers.modeling_utils import PreTrainedModel
+from transformers.models.auto.modeling_auto import AutoModelForTokenClassification
+from transformers.models.auto.tokenization_auto import AutoTokenizer
+from transformers.tokenization_utils_base import PreTrainedTokenizerBase
 
 
 @dataclass
 class PredictorConfig:
     sequence_max_length: int = 512
-    tokenizer_input_field: str = 'text'
+    tokenizer_input_field: str = "text"
     sentence_max_length: int = 80
     sentence_max_count: int = 10
     model_batch_size: int = 16
     model_ignore_labels_id: int = -100
     model_labels_names: List[str] = field(
-        default_factory=lambda: [
-            'background', 'method', 'objective', 'other', 'result'
-        ]
+        default_factory=lambda: ["background", "method", "objective", "other", "result"]
     )
 
 
@@ -82,39 +76,40 @@ class Predictor:
             model_max_length=self.config.sequence_max_length,
         )
 
-        self.parser = TokenizerMapper(
-            input_field=self.config.tokenizer_input_field,
-            tokenizer=self.tokenizer,
-            add_special_tokens=False,
-            truncation=True,
-            max_length=self.config.sentence_max_length
-        ) >> MultiSequenceStriderMapper(
-            max_stride_count=self.config.sentence_max_count,
-            max_length=self.config.sequence_max_length,
-            tokenizer=self.tokenizer,
-            length_reference_field='input_ids'
-        ) >> TokensSequencesPaddingMapper(
-            tokenizer=self.tokenizer,
-            input_field='input_ids'
-        ) >> AttentionMaskSequencePaddingMapper(
-            tokenizer=self.tokenizer,
-            input_field='attention_mask'
-        ) >> MakeFieldMapper(
-            field_name='labels',
-            value=0,
-            shape_like='input_ids'
-        ) >> SingleValueToSequenceMapper(
-            single_value_field='labels',
-            like_field='input_ids',
-            strategy='last',
-            padding_id=self.config.model_ignore_labels_id,
-        ) >> SequencesConcatenateMapper(
-        ) >> Python2TorchMapper(
-        ) >> FixedBatchSizeMapper(
-            batch_size=self.config.model_batch_size
-        ) >> FromTokenizerCollatorMapper(
-            tokenizer=self.tokenizer,
-            fields_pad_ids={'labels': self.config.model_ignore_labels_id}
+        self.parser = (
+            TokenizerMapper(
+                input_field=self.config.tokenizer_input_field,
+                tokenizer=self.tokenizer,
+                add_special_tokens=False,
+                truncation=True,
+                max_length=self.config.sentence_max_length,
+            )
+            >> MultiSequenceStriderMapper(
+                max_stride_count=self.config.sentence_max_count,
+                max_length=self.config.sequence_max_length,
+                tokenizer=self.tokenizer,
+                length_reference_field="input_ids",
+            )
+            >> TokensSequencesPaddingMapper(
+                tokenizer=self.tokenizer, input_field="input_ids"
+            )
+            >> AttentionMaskSequencePaddingMapper(
+                tokenizer=self.tokenizer, input_field="attention_mask"
+            )
+            >> MakeFieldMapper(field_name="labels", value=0, shape_like="input_ids")
+            >> SingleValueToSequenceMapper(
+                single_value_field="labels",
+                like_field="input_ids",
+                strategy="last",
+                padding_id=self.config.model_ignore_labels_id,
+            )
+            >> SequencesConcatenateMapper()
+            >> Python2TorchMapper()
+            >> FixedBatchSizeMapper(batch_size=self.config.model_batch_size)
+            >> FromTokenizerCollatorMapper(
+                tokenizer=self.tokenizer,
+                fields_pad_ids={"labels": self.config.model_ignore_labels_id},
+            )
         )
 
         self.model = AutoModelForTokenClassification.from_pretrained(
@@ -133,12 +128,11 @@ class Predictor:
         # prediction = Prediction()
         with torch.no_grad():
             for batch in samples:
-
                 output = self.model(**batch)
 
                 # text = [self.tokenizer.decode(r) for r in batch['input_ids']]
 
-                locs = batch['labels'] != self.config.model_ignore_labels_id
+                locs = batch["labels"] != self.config.model_ignore_labels_id
                 scores = output.logits[locs]
                 probs = torch.softmax(scores, dim=1)
 

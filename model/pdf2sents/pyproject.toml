@@ -13,13 +13,14 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-mmda = {git = "https://github.com/allenai/mmda.git", rev = "0.0.25"}
+mmda = {git = "https://github.com/allenai/mmda.git", rev = "0.0.29"}
 layoutparser = "0.3.4"
-torch = ">=1.9.0"
+torch = "1.9.0"
 torchvision = "0.10.0"
-springs = ">=1.2.5.3"
+springs = "^1.2.5.3"
 cached_path = ">=0.11"
 pysbd = ">=0.3.4"
+en_core_web_sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"

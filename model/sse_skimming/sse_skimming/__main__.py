@@ -114,7 +114,6 @@ def main(config: SSESkimmingConfig):
     output_file = os.path.basename(config.src).replace("pdf", "json")
     with open(os.path.join(output_path, output_file), "w") as out:
         json.dump([asdict(i) for i in instances], out)
-    return
 
     # we only call the predictor on sentences that are of type in
     # config.valid_types; by default, this is main blocks of text and

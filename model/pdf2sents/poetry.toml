@@ -1,8 +1,0 @@
-[http-basic]
-[http-basic.s2-pypi]
-username = ""
-password = ""
-
-[repositories]
-[repositories.s2-pypi]
-url = "https://pip.s2.allenai.org/simple/"
